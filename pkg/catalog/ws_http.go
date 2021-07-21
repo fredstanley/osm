@@ -1,6 +1,7 @@
 package catalog
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -15,6 +16,7 @@ import (
 var (
 	InitialSyncingPeriod = 3
 	QueryTimeout = 1 * time.Minute
+	RestTimeout = 2 * time.Minute
 	QueryErr = errors.New("rest query timed out")
 )
 
@@ -118,8 +120,10 @@ func (mc *MeshCatalog) QueryWaves(wavesIP string) (*map[string][]string, error) 
 		log.Info().Msgf("[queryWaves] querying waves:%s", wavesIP)
 		dest := fmt.Sprintf("%s:%s", wavesIP, witesand.WavesServerPort)
 		url := fmt.Sprintf("http://%s/apigrpgwmap", dest)
-		client := &http.Client{}
-		req, _ := http.NewRequest("GET", url, nil)
+		ctx, cancel := context.WithTimeout(context.TODO(), RestTimeout)
+		defer cancel()
+		client := &http.Client{Timeout: RestTimeout}
+		req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
 		var resp *http.Response
 		resp, err = client.Do(req)
 		if err == nil {
@@ -160,8 +164,10 @@ func (mc *MeshCatalog) QueryAllPodRemote(wc witesand.WitesandCataloger, remoteOs
 		log.Info().Msgf("[queryAllPodRemote] querying osm:%s", remoteOsmIP)
 		dest := fmt.Sprintf("%s:%s", remoteOsmIP, witesand.HttpServerPort)
 		url := fmt.Sprintf("http://%s/localallpods", dest)
-		client := &http.Client{}
-		req, _ := http.NewRequest("GET", url, nil)
+		ctx, cancel := context.WithTimeout(context.TODO(), RestTimeout)
+		defer cancel()
+		client := &http.Client{Timeout: RestTimeout}
+		req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
 		req.Header.Set(witesand.HttpRemoteAddrHeader, mc.getMyIP(remoteOsmIP))
 		req.Header.Set(witesand.HttpRemoteClusterIdHeader, wc.GetClusterId())
 		var resp *http.Response
@@ -203,8 +209,11 @@ func (mc *MeshCatalog) QueryRemoteEdgePods(wc witesand.WitesandCataloger, remote
 		log.Info().Msgf(" witesandHttpClient [QueryRemoteEdgePods] querying osm:%s", remoteOsmIP)
 		dest := fmt.Sprintf("%s:%s", remoteOsmIP, witesand.HttpServerPort)
 		url := fmt.Sprintf("http://%s/localedgepods", dest)
-		client := &http.Client{}
-		req, _ := http.NewRequest("GET", url, nil)
+
+		ctx, cancel := context.WithTimeout(context.TODO(), RestTimeout)
+		defer cancel()
+		client := &http.Client{Timeout: RestTimeout}
+		req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
 		req.Header.Set(witesand.HttpRemoteAddrHeader, mc.getMyIP(remoteOsmIP))
 		req.Header.Set(witesand.HttpRemoteClusterIdHeader, wc.GetClusterId())
 		var resp *http.Response

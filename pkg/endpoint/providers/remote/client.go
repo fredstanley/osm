@@ -1,6 +1,7 @@
 package remote
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/openservicemesh/osm/pkg/identity"
@@ -122,14 +123,17 @@ func (c Client) GetAnnouncementsChannel() <-chan a.Announcement {
 }
 
 func (c *Client) run() error {
+	RestTimeout := 2 * time.Minute
 
 	// send HTTP request to remote OSM
 	queryRemoteOsm := func(remoteOsmIP string) (*ServiceToEndpointMap, error) {
 		log.Info().Msgf("[queryRemoteOsm] querying osm:%s", remoteOsmIP)
 		dest := fmt.Sprintf("%s:%s", remoteOsmIP, witesand.HttpServerPort)
 		url := fmt.Sprintf("http://%s/endpoints", dest)
-		client := &http.Client{}
-		req, _ := http.NewRequest("GET", url, nil)
+		ctx, cancel := context.WithTimeout(context.TODO(), RestTimeout)
+		defer cancel()
+		client := &http.Client{Timeout: RestTimeout}
+		req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
 		req.Header.Set(witesand.HttpRemoteAddrHeader, c.wsCatalog.GetMyIP())
 		req.Header.Set(witesand.HttpRemoteClusterIdHeader, c.clusterId)
 		resp, err := client.Do(req)
