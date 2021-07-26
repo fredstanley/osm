@@ -33,7 +33,7 @@ func (wc *WitesandCatalog) UpdateApigroupMap(w http.ResponseWriter, r *http.Requ
 		}
 	}
 
-	wc.updateEnvoy()
+	wc.UpdateEnvoy()
 }
 
 func (wc *WitesandCatalog) UpdateAllApigroupMaps(apigroupToPodMap *map[string][]string) {
@@ -46,7 +46,7 @@ func (wc *WitesandCatalog) UpdateAllApigroupMaps(apigroupToPodMap *map[string][]
 		wc.apigroupToPodMap[apigroupMap.Apigroup] = apigroupMap
 	}
 	wc.ResolveAllApigroups()
-	wc.updateEnvoy()
+	wc.UpdateEnvoy()
 }
 
 // Resolve apigroup's pods to their respective IPs

@@ -101,8 +101,8 @@ func NewResponse(meshCatalog catalog.MeshCataloger, proxy *envoy.Proxy, _ *xds_d
 
 	for _, cluster := range clusters {
 		if alreadyAdded.Contains(cluster.Name) {
-			log.Error().Msgf("Found duplicate clusters with name %s; Duplicate will not be sent to Envoy with XDS Certificate SerialNumber=%s on Pod with UID=%s name=%s",
-				cluster.Name, proxy.GetCertificateSerialNumber(), proxy.GetPodUID(), proxy.GetCertificateCommonName())
+			//log.Error().Msgf("Found duplicate clusters with name %s; Duplicate will not be sent to Envoy with XDS Certificate SerialNumber=%s on Pod with UID=%s name=%s",
+			//	cluster.Name, proxy.GetCertificateSerialNumber(), proxy.GetPodUID(), proxy.GetCertificateCommonName())
 			continue
 		}
 		alreadyAdded.Add(cluster.Name)
