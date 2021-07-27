@@ -136,7 +136,7 @@ func (wc *WitesandCatalog) IsWSUnicastService(inputSvcName string) bool {
 	return false
 }
 
-func (wc *WitesandCatalog) updateEnvoy() {
+func (wc *WitesandCatalog) UpdateEnvoy() {
 	events.GetPubSubInstance().Publish(events.PubSubMessage{
 		AnnouncementType: announcements.ScheduleProxyBroadcast,
 		NewObj:           nil,

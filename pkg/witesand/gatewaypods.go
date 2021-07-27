@@ -149,7 +149,7 @@ func (wc *WitesandCatalog) UpdateClusterPods(clusterId string, clusterPods *Clus
 		}
 		// as pod/ips have changed, resolve apigroups again
 		wc.ResolveAllApigroups()
-		wc.updateEnvoy()
+		wc.UpdateEnvoy()
 	}
 }
 

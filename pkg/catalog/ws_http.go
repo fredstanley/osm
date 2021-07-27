@@ -179,7 +179,7 @@ func (mc *MeshCatalog) QueryAllPodRemote(wc witesand.WitesandCataloger, remoteOs
 			if err == nil {
 				err = json.Unmarshal(b, &remotePods)
 				if err == nil {
-					log.Info().Msgf("[queryAllPodRemote] remoteOsmIP:%s remotePods:%+v", remoteOsmIP, remotePods)
+					//log.Info().Msgf("[queryAllPodRemote] remoteOsmIP:%s remotePods:%+v", remoteOsmIP, remotePods)
 					return
 				} else {
 					log.Error().Msgf("[queryAllPodRemote] Marshalling error:%s", err)

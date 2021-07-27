@@ -8,6 +8,7 @@ import (
 	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
+	"reflect"
 	"time"
 
 	"k8s.io/client-go/kubernetes"
@@ -159,6 +160,13 @@ func (c *Client) run() error {
 	// update the cache
 	updateCache := func(k8sName string, epMap *ServiceToEndpointMap) {
 		c.caches.Lock()
+
+		if !reflect.DeepEqual(c.caches.k8sToServiceEndpoints[k8sName], epMap) {
+			log.Info().Msgf("[updateCache] updating envoy %s", k8sName)
+			c.wsCatalog.UpdateEnvoy()
+			log.Info().Msgf("[updateCache] updating envoy %s", k8sName)
+		}
+
 		log.Info().Msgf("[updateCache] updating %s", k8sName)
 		c.caches.k8sToServiceEndpoints[k8sName] = epMap
 		c.caches.Unlock()
