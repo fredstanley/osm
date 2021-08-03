@@ -8,6 +8,12 @@ import (
 	"github.com/openservicemesh/osm/pkg/constants"
 )
 
+
+var iptablesFlushChains = []string{
+	"iptables -t nat -F",
+	"iptables -t nat -X",
+}
+
 // iptablesRedirectionChains is the list of iptables chains created for traffic redirection via the proxy sidecar
 var iptablesRedirectionChains = []string{
 	// Chain to intercept inbound traffic
@@ -74,6 +80,9 @@ var iptablesInboundStaticRules = []string{
 // generateIptablesCommands generates a list of iptables commands to set up sidecar interception and redirection
 func generateIptablesCommands(outboundIPRangeExclusionList []string, outboundPortExclusionList []int, inboundPortExclusionList []int) []string {
 	var cmd []string
+
+	// 0. Flush iptables
+	cmd = append(cmd, iptablesFlushChains...)
 
 	// 1. Create redirection chains
 	cmd = append(cmd, iptablesRedirectionChains...)
