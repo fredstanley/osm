@@ -5,6 +5,11 @@ import (
 	"fmt"
 	"net/http"
 )
+
+func(wc *WitesandCatalog) FetchApigroupMap() map[string]ApigroupToPodMap {
+	return wc.apigroupToPodMap
+}
+
 func (wc *WitesandCatalog) UpdateApigroupMap(w http.ResponseWriter, r *http.Request) {
 	var input map[string][]string
 	err := json.NewDecoder(r.Body).Decode(&input)

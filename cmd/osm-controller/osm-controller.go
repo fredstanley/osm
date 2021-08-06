@@ -112,7 +112,8 @@ func main() {
 		log.Fatal().Err(err).Msg("Error parsing cmd line arguments")
 	}
 
-	if err := logger.SetLogLevel("info"); err != nil {
+	log.Info().Msgf("Verbosity=%s", verbosity)
+	if err := logger.SetLogLevel(verbosity); err != nil {
 		log.Fatal().Err(err).Msg("Error setting log level")
 	}
 

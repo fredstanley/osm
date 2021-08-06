@@ -41,6 +41,9 @@ func (mc *MeshCatalog) witesandHttpServer() {
 	// POST/PUT/DELETE handler
 	http.HandleFunc("/apigroupMap", mc.ApigroupMapping) // from waves
 
+	//Debugging. This give the current APIGROUP mapping from cachce
+	http.HandleFunc("/apigroupCache", mc.ApigroupCache) // inter OSM
+
 	http.ListenAndServe(":"+witesand.HttpServerPort, nil)
 }
 
@@ -375,4 +378,11 @@ func (mc *MeshCatalog) GetLocalEndpoints(w http.ResponseWriter, r *http.Request)
 
 func (mc *MeshCatalog) ApigroupMapping(w http.ResponseWriter, r *http.Request) {
 	mc.witesandCatalog.UpdateApigroupMap(w, r)
+}
+
+func (mc *MeshCatalog) ApigroupCache(w http.ResponseWriter, r *http.Request) {
+	m := mc.witesandCatalog.FetchApigroupMap()
+	if err := json.NewEncoder(w).Encode(m); err != nil {
+		log.Error().Msgf("err encoding apigroup map %+v", err)
+	}
 }
