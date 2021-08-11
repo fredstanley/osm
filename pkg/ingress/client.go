@@ -25,7 +25,8 @@ const (
 	ingressKind = "Ingress"
 )
 
-var candidateVersions = []string{networkingV1.SchemeGroupVersion.String(), networkingV1beta1.SchemeGroupVersion.String()}
+//witesand change
+var candidateVersions = []string{networkingV1.SchemeGroupVersion.String()}
 
 // NewIngressClient implements ingress.Monitor and creates the Kubernetes client to monitor Ingress resources.
 func NewIngressClient(kubeClient kubernetes.Interface, kubeController k8s.Controller, stop chan struct{}, _ configurator.Configurator) (Monitor, error) {
