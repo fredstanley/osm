@@ -93,20 +93,23 @@ func (mc *MeshCatalog) witesandHttpClient() {
 		}
 
 		// learn apigroups from waves
-		if wc.IsMaster() && !initialWavesSyncDone && InitialSyncingPeriod != 0 {
+		if wc.IsMaster() && !initialWavesSyncDone && InitialSyncingPeriod == 0 {
 			wavesPods, err := wc.ListWavesPodIPs()
 			if err == nil && len(wavesPods) != 0 {
 				apigroupMaps, err := mc.QueryWaves(wavesPods[0])
 				if err == nil {
 					wc.UpdateAllApigroupMaps(apigroupMaps)
 					initialWavesSyncDone = true
+					log.Info().Msgf("[QueryWaves] [ApigroupMap] initialWavesSyncDone = %v InitalSyncingPeriod=%d", initialWavesSyncDone, InitialSyncingPeriod)
+					log.Info().Msgf("[QueryWaves] [ApigroupMap] initialWavesSyncDone = %v apigroupMap=%+v", initialWavesSyncDone, apigroupMaps)
 				} else if err == QueryErr {
-					log.Error().Msgf(" witesandHttpClient QueryWaves timedout")
+					log.Error().Msgf("[QueryWaves] [ApigroupMap]  witesandHttpClient QueryWaves timedout")
 				}
 			}
 		}
 
 		if InitialSyncingPeriod != 0 {
+			log.Info().Msgf("[QueryWaves] [ApigroupMap] initialWavesSyncDone = %v InitalSyncingPeriod=%d", initialWavesSyncDone, InitialSyncingPeriod)
 			InitialSyncingPeriod -= 1
 		}
 		<-ticker.C
@@ -312,7 +315,7 @@ func (mc *MeshCatalog) GetAllLocalPods(w http.ResponseWriter, r *http.Request) {
 func (mc *MeshCatalog) GetAllTunnelPods(w http.ResponseWriter, r *http.Request) {
 	if InitialSyncingPeriod != 0 {
 		// initial cooling period, need to wait till we sync with others
-		log.Error().Msgf("InitialSyncingPeriod not over !!, send error response")
+		log.Error().Msgf("GetAllTunnelPods InitialSyncingPeriod not over !!, send error response")
 		w.WriteHeader(503)
 		fmt.Fprintf(w, "Not ready")
 		return
@@ -330,7 +333,7 @@ func (mc *MeshCatalog) GetAllTunnelPods(w http.ResponseWriter, r *http.Request) 
 func (mc *MeshCatalog) GetAllEdgePods(w http.ResponseWriter, r *http.Request) {
 	if InitialSyncingPeriod != 0 {
 		// initial cooling period, need to wait till we sync with others
-		log.Error().Msgf("InitialSyncingPeriod not over !!, send error response")
+		log.Error().Msgf("GetAllEdgePods InitialSyncingPeriod not over !!, send error response")
 		w.WriteHeader(503)
 		fmt.Fprintf(w, "Not ready")
 		return
@@ -348,7 +351,7 @@ func (mc *MeshCatalog) GetAllEdgePods(w http.ResponseWriter, r *http.Request) {
 func (mc *MeshCatalog) GetAllPods(w http.ResponseWriter, r *http.Request) {
 	if InitialSyncingPeriod != 0 {
 		// initial cooling period, need to wait till we sync with others
-		log.Error().Msgf("InitialSyncingPeriod not over !!, send error response")
+		log.Error().Msgf("GetAllPods InitialSyncingPeriod not over !!, send error response")
 		w.WriteHeader(503)
 		fmt.Fprintf(w, "Not ready")
 		return
