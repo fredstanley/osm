@@ -7,6 +7,8 @@ import (
 )
 
 func(wc *WitesandCatalog) FetchApigroupMap() map[string]ApigroupToPodMap {
+	wc.Lock()
+	defer wc.Unlock()
 	return wc.apigroupToPodMap
 }
 
@@ -14,12 +16,13 @@ func (wc *WitesandCatalog) UpdateApigroupMap(w http.ResponseWriter, r *http.Requ
 	var input map[string][]string
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil  {
-		log.Error().Msgf("[UpdateApigroupMap] JSON decode err:%s", err)
+		log.Error().Msgf("update [ApigroupMap] JSON decode err:%s", err)
 		w.WriteHeader(400)
 		fmt.Fprintf(w, "Decode error! please check your JSON formating.")
 		return
 	}
 
+	wc.Lock()
 	for apigroupName, pods := range input {
 		atopMap := ApigroupToPodMap{
 			Apigroup: apigroupName,
@@ -27,22 +30,24 @@ func (wc *WitesandCatalog) UpdateApigroupMap(w http.ResponseWriter, r *http.Requ
 		}
 		if len(atopMap.Pods) == 0 {
 			// DELETE pods
-			log.Info().Msgf("[UpdateApigroupMap] DELETE apigroup:%s", apigroupName)
+			log.Info().Msgf("update [ApigroupMap] DELETE apigroup:%s", apigroupName)
 			delete(wc.apigroupToPodMap, apigroupName)
 			delete(wc.apigroupToPodIPMap, apigroupName)
 		} else {
 			// UPDATE pods
-			log.Info().Msgf("[UpdateApigroupMap] POST apigroup:%s pods:%+v", apigroupName, atopMap.Pods)
+			log.Info().Msgf("[ApigroupMap] POST apigroup:%s pods:%+v", apigroupName, atopMap.Pods)
 			wc.apigroupToPodMap[apigroupName] = atopMap
 			wc.resolveApigroup(atopMap)
 		}
 	}
+	wc.Unlock()
 
 	wc.UpdateEnvoy()
 }
 
 func (wc *WitesandCatalog) UpdateAllApigroupMaps(apigroupToPodMap *map[string][]string) {
-	log.Info().Msgf("[UpdateAllApigroupMaps] updating %d apiggroups", len(*apigroupToPodMap))
+	wc.Lock()
+	log.Info().Msgf("UpdateAll [ApigroupMap] updating %d apiggroups", len(*apigroupToPodMap))
 	for apigroupName, pods := range *apigroupToPodMap {
 		apigroupMap := ApigroupToPodMap{
 			Apigroup: apigroupName,
@@ -51,6 +56,8 @@ func (wc *WitesandCatalog) UpdateAllApigroupMaps(apigroupToPodMap *map[string][]
 		wc.apigroupToPodMap[apigroupMap.Apigroup] = apigroupMap
 	}
 	wc.ResolveAllApigroups()
+	wc.Unlock()
+
 	wc.UpdateEnvoy()
 }
 
@@ -69,23 +76,25 @@ func (wc *WitesandCatalog) resolveApigroup(atopmap ApigroupToPodMap) {
 			}
 		}
 		if podip != "" {
-			log.Info().Msgf("[resolveApigroup] RESOLVE pod:%s IP:%s", pod, podip)
+			log.Info().Msgf("[ApigroupMap] RESOLVE pod:%s IP:%s", pod, podip)
 			atopipmap.PodIPs = append(atopipmap.PodIPs, podip)
 		} else {
-			log.Info().Msgf("[resolveApigroup] CANNOT RESOLVE pod:%s !!", pod)
+			log.Info().Msgf("[ApigroupMap] CANNOT RESOLVE pod:%s !!", pod)
 		}
 	}
 	wc.apigroupToPodIPMap[atopipmap.Apigroup] = atopipmap
 }
 
 func (wc *WitesandCatalog) ResolveAllApigroups() {
-	log.Info().Msgf("[ResolveAllApigroups] Resovling all apigroups")
+	log.Info().Msgf("[ApigroupMap] Resovling all apigroups")
 	for _, atopmap := range wc.apigroupToPodMap {
 		wc.resolveApigroup(atopmap)
 	}
 }
 
 func (wc *WitesandCatalog) ListApigroupClusterNames() ([]string, error) {
+	wc.Lock()
+	defer wc.Unlock()
 	var apigroups []string
 	for apigroup, _ := range wc.apigroupToPodMap {
 		apigroups = append(apigroups, apigroup)
@@ -95,6 +104,8 @@ func (wc *WitesandCatalog) ListApigroupClusterNames() ([]string, error) {
 }
 
 func (wc *WitesandCatalog) ListApigroupToPodIPs() ([]ApigroupToPodIPMap, error) {
+	wc.Lock()
+	defer wc.Unlock()
 	var atopipMaps []ApigroupToPodIPMap
 	for _, atopipMap := range wc.apigroupToPodIPMap {
 		atopipMaps = append(atopipMaps, atopipMap)

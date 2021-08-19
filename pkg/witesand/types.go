@@ -3,6 +3,7 @@ package witesand
 import (
 	"github.com/openservicemesh/osm/pkg/service"
 	"net/http"
+	"sync"
 
 	"k8s.io/client-go/kubernetes"
 
@@ -46,6 +47,7 @@ type WitesandCatalog struct {
 
 	kubeClient kubernetes.Interface
 
+	sync.RWMutex
 	apigroupToPodMap   map[string]ApigroupToPodMap
 	apigroupToPodIPMap map[string]ApigroupToPodIPMap
 }
