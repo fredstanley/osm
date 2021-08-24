@@ -55,9 +55,9 @@ func (wc *WitesandCatalog) UpdateAllApigroupMaps(apigroupToPodMap *map[string][]
 		}
 		wc.apigroupToPodMap[apigroupMap.Apigroup] = apigroupMap
 	}
-	wc.ResolveAllApigroups()
 	wc.Unlock()
 
+	wc.ResolveAllApigroups()
 	wc.UpdateEnvoy()
 }
 
@@ -86,6 +86,8 @@ func (wc *WitesandCatalog) resolveApigroup(atopmap ApigroupToPodMap) {
 }
 
 func (wc *WitesandCatalog) ResolveAllApigroups() {
+	wc.Lock()
+	defer wc.Unlock()
 	log.Info().Msgf("[ApigroupMap] Resovling all apigroups")
 	for _, atopmap := range wc.apigroupToPodMap {
 		wc.resolveApigroup(atopmap)
