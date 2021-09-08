@@ -33,6 +33,9 @@ func getHTTPConnectionManager(routeName string, cfg configurator.Configurator) *
 			},
 		},
 		AccessLog: envoy.GetAccessLog(),
+		UpgradeConfigs: []*xds_hcm.HttpConnectionManager_UpgradeConfig{{
+			UpgradeType: "websocket",
+		}},
 	}
 
 	/* WITESAND START COMMENTED 

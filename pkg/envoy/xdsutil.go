@@ -223,7 +223,7 @@ func GetHTTP2ProtocolOptions() (map[string]*any.Any, error) {
 		&extensions_upstream_http_v3.HttpProtocolOptions{
 			UpstreamProtocolOptions: &extensions_upstream_http_v3.HttpProtocolOptions_UseDownstreamProtocolConfig{
 				UseDownstreamProtocolConfig: &extensions_upstream_http_v3.HttpProtocolOptions_UseDownstreamHttpConfig{
-					Http2ProtocolOptions: &xds_core.Http2ProtocolOptions{},
+					Http2ProtocolOptions: &xds_core.Http2ProtocolOptions{AllowConnect:true},
 
 				},
 			},
