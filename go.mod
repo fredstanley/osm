@@ -5,6 +5,7 @@ go 1.15
 require (
 	github.com/AlekSi/gocov-xml v0.0.0-20190121064608-3a14fb1c4737
 	github.com/Azure/go-autorest/autorest/to v0.3.0
+	github.com/apibillme/cache v0.0.0-20180927200649-e0b3581c9b4d // indirect
 	github.com/axw/gocov v1.0.0
 	github.com/cskr/pubsub v1.0.2
 	github.com/deckarep/golang-set v1.7.1

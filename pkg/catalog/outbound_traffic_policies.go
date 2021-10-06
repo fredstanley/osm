@@ -98,6 +98,14 @@ func (mc *MeshCatalog) listOutboundTrafficPoliciesForTrafficSplits(sourceNamespa
 // ListAllowedOutboundServicesForIdentity list the services the given service account is allowed to initiate outbound connections to
 // Note: ServiceIdentity must be in the format "name.namespace" [https://github.com/openservicemesh/osm/issues/3188]
 func (mc *MeshCatalog) ListAllowedOutboundServicesForIdentity(serviceIdentity identity.ServiceIdentity) []service.MeshService {
+	r, found := mc.GetWitesandCdsCache(string(serviceIdentity))
+	if found {
+		log.Error().Msgf("found=%+v r%+v", found, r)
+		return r
+	}
+	log.Error().Msgf("found=%+v fetching...", found)
+
+
 	ident := serviceIdentity.ToK8sServiceAccount()
 	if mc.configurator.IsPermissiveTrafficPolicyMode() {
 		return mc.listMeshServices()
@@ -127,6 +135,9 @@ func (mc *MeshCatalog) ListAllowedOutboundServicesForIdentity(serviceIdentity id
 	for elem := range serviceSet.Iter() {
 		allowedServices = append(allowedServices, elem.(service.MeshService))
 	}
+	log.Error().Msgf("fred serviceIdentity=%+v allowservices=%+v", serviceIdentity, allowedServices)
+	mc.SetWitesandCdsCache(string(serviceIdentity), allowedServices)
+
 	return allowedServices
 }
 

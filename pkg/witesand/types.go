@@ -1,6 +1,7 @@
 package witesand
 
 import (
+	"github.com/apibillme/cache"
 	"github.com/openservicemesh/osm/pkg/service"
 	"net/http"
 	"sync"
@@ -50,6 +51,8 @@ type WitesandCatalog struct {
 	sync.RWMutex
 	apigroupToPodMap   map[string]ApigroupToPodMap
 	apigroupToPodIPMap map[string]ApigroupToPodIPMap
+
+	CdsCache cache.Cache
 }
 
 type RemoteK8s struct {

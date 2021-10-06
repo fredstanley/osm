@@ -111,6 +111,8 @@ type MeshCataloger interface {
 	// ListLocalClusterEndpoints returns the list of endpoints for this kubernetes cluster
 	ListLocalClusterEndpoints() (map[string][]endpoint.Endpoint, error)
 	GetWitesandCataloger() witesand.WitesandCataloger
+	GetWitesandCdsCache(string) ([]service.MeshService, bool)
+	SetWitesandCdsCache(string, []service.MeshService) bool
 	//witesand end
 }
 

@@ -14,6 +14,14 @@ import (
 
 // NewResponse creates a new Cluster Discovery Response.
 func NewResponse(meshCatalog catalog.MeshCataloger, proxy *envoy.Proxy, _ *xds_discovery.DiscoveryRequest, cfg configurator.Configurator, _ certificate.Manager, proxyRegistry *registry.ProxyRegistry) ([]types.Resource, error) {
+	//r, found := meshCatalog.GetWitesandCdsCache()
+	//if found {
+	//	log.Error().Msgf("found=%+v r%+v", found, r)
+	//	return r, nil
+	//}
+	//log.Error().Msgf("found=%+v fetching...", found)
+
+
 	svcList, err := proxyRegistry.ListProxyServices(proxy)
 	if err != nil {
 		log.Error().Err(err).Msgf("Error looking up MeshService for Envoy with SerialNumber=%s on Pod with UID=%s", proxy.GetCertificateSerialNumber(), proxy.GetPodUID())
@@ -108,5 +116,7 @@ func NewResponse(meshCatalog catalog.MeshCataloger, proxy *envoy.Proxy, _ *xds_d
 		alreadyAdded.Add(cluster.Name)
 		cdsResources = append(cdsResources, cluster)
 	}
+
+	//meshCatalog.SetWitesandCdsCache(cdsResources)
 	return cdsResources, nil
 }

@@ -44,6 +44,10 @@ func getEnvoyConfigYAML(config envoyBootstrapConfigMeta, cfg configurator.Config
 						},
 					},
 				},
+				"rate_limit_settings" : map[string]interface{}{
+					"max_tokens": 10,
+					"fill_rate": 5,
+				},
 				"set_node_on_first_message_only": true,
 			},
 			"cds_config": map[string]interface{}{

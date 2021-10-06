@@ -20,6 +20,17 @@ func (mc *MeshCatalog) GetWitesandCataloger() witesand.WitesandCataloger {
 	return mc.witesandCatalog
 }
 
+func (mc *MeshCatalog) GetWitesandCdsCache(serviceIdentity string) ([]service.MeshService, bool ) {
+	if r, found := mc.witesandCatalog.CdsCache.Get(serviceIdentity); found {
+		return r.([]service.MeshService), true
+	}
+	return nil, false
+}
+
+func (mc *MeshCatalog) SetWitesandCdsCache(serviceIdentity string, result []service.MeshService) bool {
+	return mc.witesandCatalog.CdsCache.Set(serviceIdentity, result)
+}
+
 // ListLocalEndpoints returns the list of endpoints for this kubernetes cluster
 func (mc *MeshCatalog) ListLocalClusterEndpoints() (map[string][]endpoint.Endpoint, error) {
 	endpointMap := make(map[string][]endpoint.Endpoint)
