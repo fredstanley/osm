@@ -48,6 +48,7 @@ func NewADSServer(meshCatalog catalog.MeshCataloger, proxyRegistry *registry.Pro
 		xdsMapLogMutex: sync.Mutex{},
 		xdsLog:         make(map[certificate.CommonName]map[envoy.TypeURI][]time.Time),
 		workqueues:     workerpool.NewWorkerPool(workerPoolSize),
+		//workqueues:     workerpool.NewWorkerPool(5),
 	}
 
 	return &server

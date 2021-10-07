@@ -56,7 +56,7 @@ const (
 	DefaultEnvoyLogLevel = "error"
 
 	// DefaultOSMLogLevel is the default OSM log level if none is specified
-	DefaultOSMLogLevel = "info"
+	DefaultOSMLogLevel = "debug"
 
 	// DefaultEnvoyImage is the default envoy proxy sidecar image if not defined in the osm MeshConfig
 	DefaultEnvoyImage = "envoyproxy/envoy-alpine:v1.18.3"

@@ -2,12 +2,11 @@ package catalog
 
 import (
 	"fmt"
-
 	mapset "github.com/deckarep/golang-set"
-	smiAccess "github.com/servicemeshinterface/smi-sdk-go/pkg/apis/access/v1alpha3"
-
 	"github.com/openservicemesh/osm/pkg/identity"
 	"github.com/openservicemesh/osm/pkg/trafficpolicy"
+	smiAccess "github.com/servicemeshinterface/smi-sdk-go/pkg/apis/access/v1alpha3"
+	"time"
 )
 
 const (
@@ -24,13 +23,30 @@ const (
 // ListAllowedInboundServiceIdentities lists the downstream service identities that can connect to the given upstream service account
 // Note: ServiceIdentity must be in the format "name.namespace" [https://github.com/openservicemesh/osm/issues/3188]
 func (mc *MeshCatalog) ListAllowedInboundServiceIdentities(upstream identity.ServiceIdentity) ([]identity.ServiceIdentity, error) {
-	return mc.getAllowedDirectionalServiceAccounts(upstream, inbound)
+	//r, found := mc.GetWitesandCdsCache(string(upstream+"inbound"))
+	//if found {
+	//	//log.Error().Msgf("found=%+v r%+v", found, r)
+	//	return r, nil
+	//}
+	//log.Error().Msgf("cache found=%+v fetching...", found)
+	mc.witesandCatalog.CurrTime.Add(time.Duration(time.Second*30)).After(time.Now())
+	{
+		mc.witesandCatalog.CurrTime = time.Now()
+		in, err := mc.getAllowedDirectionalServiceAccounts(upstream, inbound)
+		return in, err
+	}
+	return nil, nil
 }
 
 // ListAllowedOutboundServiceIdentities lists the upstream service identities the given downstream service account can connect to
 // Note: ServiceIdentity must be in the format "name.namespace" [https://github.com/openservicemesh/osm/issues/3188]
 func (mc *MeshCatalog) ListAllowedOutboundServiceIdentities(downstream identity.ServiceIdentity) ([]identity.ServiceIdentity, error) {
-	return mc.getAllowedDirectionalServiceAccounts(downstream, outbound)
+	mc.witesandCatalog.CurrTime.Add(time.Duration(time.Second*30)).After(time.Now())
+	{
+		mc.witesandCatalog.CurrTime = time.Now()
+		return mc.getAllowedDirectionalServiceAccounts(downstream, outbound)
+	}
+	return nil, nil
 }
 
 // ListInboundTrafficTargetsWithRoutes returns a list traffic target objects composed of its routes for the given destination service account

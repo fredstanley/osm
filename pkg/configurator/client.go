@@ -111,22 +111,22 @@ func (c *Client) run(stop <-chan struct{}) {
 func meshConfigAddedMessageHandler(psubMsg *events.PubSubMessage) {
 	log.Debug().Msgf("[%s] OSM MeshConfig added event triggered a global proxy broadcast",
 		psubMsg.AnnouncementType)
-	events.GetPubSubInstance().Publish(events.PubSubMessage{
-		AnnouncementType: announcements.ScheduleProxyBroadcast,
-		OldObj:           nil,
-		NewObj:           nil,
-	})
+	//events.GetPubSubInstance().Publish(events.PubSubMessage{
+	//	AnnouncementType: announcements.ScheduleProxyBroadcast,
+	//	OldObj:           nil,
+	//	NewObj:           nil,
+	//})
 }
 
 func meshConfigDeletedMessageHandler(psubMsg *events.PubSubMessage) {
 	// Ignore deletion. We expect config to be present
 	log.Debug().Msgf("[%s] OSM MeshConfig deleted event triggered a global proxy broadcast",
 		psubMsg.AnnouncementType)
-	events.GetPubSubInstance().Publish(events.PubSubMessage{
-		AnnouncementType: announcements.ScheduleProxyBroadcast,
-		OldObj:           nil,
-		NewObj:           nil,
-	})
+	//events.GetPubSubInstance().Publish(events.PubSubMessage{
+	//	AnnouncementType: announcements.ScheduleProxyBroadcast,
+	//	OldObj:           nil,
+	//	NewObj:           nil,
+	//})
 }
 
 func meshConfigUpdatedMessageHandler(psubMsg *events.PubSubMessage) {
@@ -172,11 +172,11 @@ func meshConfigUpdatedMessageHandler(psubMsg *events.PubSubMessage) {
 	if triggerGlobalBroadcast {
 		log.Debug().Msgf("[%s] OSM MeshConfig update triggered global proxy broadcast",
 			psubMsg.AnnouncementType)
-		events.GetPubSubInstance().Publish(events.PubSubMessage{
-			AnnouncementType: announcements.ScheduleProxyBroadcast,
-			OldObj:           nil,
-			NewObj:           nil,
-		})
+		//events.GetPubSubInstance().Publish(events.PubSubMessage{
+		//	AnnouncementType: announcements.ScheduleProxyBroadcast,
+		//	OldObj:           nil,
+		//	NewObj:           nil,
+		//})
 	} else {
 		log.Trace().Msgf("[%s] OSM MeshConfig update, NOT triggering global proxy broadcast",
 			psubMsg.AnnouncementType)

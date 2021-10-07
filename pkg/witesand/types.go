@@ -5,6 +5,7 @@ import (
 	"github.com/openservicemesh/osm/pkg/service"
 	"net/http"
 	"sync"
+	"time"
 
 	"k8s.io/client-go/kubernetes"
 
@@ -52,7 +53,8 @@ type WitesandCatalog struct {
 	apigroupToPodMap   map[string]ApigroupToPodMap
 	apigroupToPodIPMap map[string]ApigroupToPodIPMap
 
-	CdsCache cache.Cache
+	Cache cache.Cache
+	CurrTime time.Time
 }
 
 type RemoteK8s struct {

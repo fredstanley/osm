@@ -41,11 +41,11 @@ func (pr *ProxyRegistry) ReleaseCertificateHandler(certManager certificate.Manag
 
 					// Request a broadcast update, just for security.
 					// Dispatcher code also handles PodDelete, so probably the two will get coalesced.
-					events.GetPubSubInstance().Publish(events.PubSubMessage{
-						AnnouncementType: announcements.ScheduleProxyBroadcast,
-						NewObj:           nil,
-						OldObj:           nil,
-					})
+					//events.GetPubSubInstance().Publish(events.PubSubMessage{
+					//	AnnouncementType: announcements.ScheduleProxyBroadcast,
+					//	NewObj:           nil,
+					//	OldObj:           nil,
+					//})
 				} else {
 					log.Warn().Msgf("Pod with UID %s not found in Mesh Catalog", podUID)
 				}

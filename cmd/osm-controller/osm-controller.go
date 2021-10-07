@@ -113,7 +113,7 @@ func main() {
 	}
 
 	log.Info().Msgf("Verbosity=%s", verbosity)
-	if err := logger.SetLogLevel(verbosity); err != nil {
+	if err := logger.SetLogLevel("debug"); err != nil {
 		log.Fatal().Err(err).Msg("Error setting log level")
 	}
 

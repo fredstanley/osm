@@ -100,11 +100,10 @@ func (mc *MeshCatalog) listOutboundTrafficPoliciesForTrafficSplits(sourceNamespa
 func (mc *MeshCatalog) ListAllowedOutboundServicesForIdentity(serviceIdentity identity.ServiceIdentity) []service.MeshService {
 	r, found := mc.GetWitesandCdsCache(string(serviceIdentity))
 	if found {
-		log.Error().Msgf("found=%+v r%+v", found, r)
+		//log.Error().Msgf("found=%+v r%+v", found, r)
 		return r
 	}
-	log.Error().Msgf("found=%+v fetching...", found)
-
+	log.Error().Msgf("cache found=%+v fetching...", found)
 
 	ident := serviceIdentity.ToK8sServiceAccount()
 	if mc.configurator.IsPermissiveTrafficPolicyMode() {
@@ -135,9 +134,8 @@ func (mc *MeshCatalog) ListAllowedOutboundServicesForIdentity(serviceIdentity id
 	for elem := range serviceSet.Iter() {
 		allowedServices = append(allowedServices, elem.(service.MeshService))
 	}
-	log.Error().Msgf("fred serviceIdentity=%+v allowservices=%+v", serviceIdentity, allowedServices)
+	log.Error().Msgf("cache serviceIdentity=%+v allowservices=%+v", serviceIdentity, allowedServices)
 	mc.SetWitesandCdsCache(string(serviceIdentity), allowedServices)
-
 	return allowedServices
 }
 
@@ -176,7 +174,7 @@ func (mc *MeshCatalog) buildOutboundPolicies(sourceServiceIdentity identity.Serv
 	// fetch services running workloads with destination service account
 	destServices, err := mc.getDestinationServicesFromTrafficTarget(t)
 	if err != nil {
-		log.Error().Err(err).Msgf("Error resolving destination from traffic target %s (%s)", t.Name, t.Namespace)
+		//log.Error().Err(err).Msgf("Error resolving destination from traffic target %s (%s)", t.Name, t.Namespace)
 		return outboundPolicies
 	}
 

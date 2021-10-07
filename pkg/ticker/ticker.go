@@ -143,11 +143,11 @@ func ticker(ready chan struct{}, stop <-chan struct{}) {
 			ticker = make(<-chan time.Time)
 		case <-ticker:
 			log.Info().Msgf("Ticker requesting broadcast proxy update")
-			events.GetPubSubInstance().Publish(
-				events.PubSubMessage{
-					AnnouncementType: announcements.ScheduleProxyBroadcast,
-				},
-			)
+			//events.GetPubSubInstance().Publish(
+			//	events.PubSubMessage{
+			//		AnnouncementType: announcements.ScheduleProxyBroadcast,
+			//	},
+			//)
 		case <-stop:
 			return
 		}

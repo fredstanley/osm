@@ -99,10 +99,13 @@ func ensureRDSRequestCompletion(discoveryReq *xds_discovery.DiscoveryRequest, rd
 	requestDifference := requestMapset.Difference(responseMapset)
 	for reqDif := range requestDifference.Iterator().C {
 		unfulfilledRequestedResource := reqDif.(string)
+		//log.Info().Msgf("RDS unfulfil=%+v", unfulfilledRequestedResource)
+
 		rdsResources = append(rdsResources, route.NewRouteConfigurationStub(unfulfilledRequestedResource))
 	}
 
-	log.Info().Msgf("RDS did not fulfill all requested resources (diff: %v). Fulfill with empty RouteConfigs.", requestDifference)
+	//log.Info().Msgf("RDS did not fulfill all requested resources (diff: %v). Fulfill with empty RouteConfigs.", requestDifference)
 
+	//log.Info().Msgf("RDS rdsresource=%+v", rdsResources)
 	return rdsResources
 }

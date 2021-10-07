@@ -25,7 +25,8 @@ func NewWitesandCatalog(kubeClient kubernetes.Interface, clusterId string) *Wite
 		kubeClient:         kubeClient,
 		apigroupToPodMap:   make(map[string]ApigroupToPodMap),
 		apigroupToPodIPMap: make(map[string]ApigroupToPodIPMap),
-		CdsCache:           cache.New(1024, cache.WithTTL(1*time.Minute)),
+		Cache:              cache.New(1024, cache.WithTTL(1*time.Minute)),
+		CurrTime: 			time.Now(),
 	}
 
 	wc.UpdateMasterOsmIP()
@@ -141,6 +142,7 @@ func (wc *WitesandCatalog) IsWSUnicastService(inputSvcName string) bool {
 }
 
 func (wc *WitesandCatalog) UpdateEnvoy() {
+	return
 	events.GetPubSubInstance().Publish(events.PubSubMessage{
 		AnnouncementType: announcements.ScheduleProxyBroadcast,
 		NewObj:           nil,

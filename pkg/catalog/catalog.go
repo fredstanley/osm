@@ -1,9 +1,6 @@
 package catalog
 
 import (
-	"github.com/openservicemesh/osm/pkg/witesand"
-	"k8s.io/client-go/kubernetes"
-
 	"github.com/openservicemesh/osm/pkg/certificate"
 	"github.com/openservicemesh/osm/pkg/configurator"
 	"github.com/openservicemesh/osm/pkg/endpoint"
@@ -12,6 +9,8 @@ import (
 	"github.com/openservicemesh/osm/pkg/policy"
 	"github.com/openservicemesh/osm/pkg/smi"
 	"github.com/openservicemesh/osm/pkg/ticker"
+	"github.com/openservicemesh/osm/pkg/witesand"
+	"k8s.io/client-go/kubernetes"
 )
 
 // NewMeshCatalog creates a new service catalog

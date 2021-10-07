@@ -3,6 +3,7 @@ package kubernetes
 import (
 	"reflect"
 	"strconv"
+	"strings"
 
 	mapset "github.com/deckarep/golang-set"
 	"github.com/pkg/errors"
@@ -168,8 +169,13 @@ func (c *Client) run(stop <-chan struct{}) error {
 
 // IsMonitoredNamespace returns a boolean indicating if the namespace is among the list of monitored namespaces
 func (c Client) IsMonitoredNamespace(namespace string) bool {
-	_, exists, _ := c.informers[Namespaces].GetStore().GetByKey(namespace)
-	return exists
+	//TODO check before checking... if namespace is default ..
+	if strings.EqualFold(namespace, "default") {
+		return true
+	}
+	return false
+	//_, exists, _ := c.informers[Namespaces].GetStore().GetByKey(namespace)
+	//return exists
 }
 
 // ListMonitoredNamespaces returns all namespaces that the mesh is monitoring.
