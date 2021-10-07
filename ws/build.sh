@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export CTR_REGISTRY=docker.dev.ws:5000
-export CTR_TAG=osmv0.9.1-tag10
+export CTR_TAG=osmv0.9.1-tag14
 
 make docker-push-init-osm-controller
 make docker-push-osm-controller
