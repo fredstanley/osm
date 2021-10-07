@@ -1,9 +1,11 @@
 package witesand
 
 import (
+	"github.com/apibillme/cache"
 	"github.com/openservicemesh/osm/pkg/service"
 	"os"
 	"strings"
+	"time"
 
 	"k8s.io/client-go/kubernetes"
 
@@ -22,6 +24,8 @@ func NewWitesandCatalog(kubeClient kubernetes.Interface, clusterId string) *Wite
 		kubeClient:         kubeClient,
 		apigroupToPodMap:   make(map[string]ApigroupToPodMap),
 		apigroupToPodIPMap: make(map[string]ApigroupToPodIPMap),
+		Cache:              cache.New(10*1024, cache.WithTTL(30*time.Second)),
+		CurrTime:           time.Now(),
 	}
 
 	wc.UpdateMasterOsmIP()

@@ -19,6 +19,11 @@ import (
 // NewResponse creates a new Secrets Discovery Response.
 func NewResponse(meshCatalog catalog.MeshCataloger, proxy *envoy.Proxy, request *xds_discovery.DiscoveryRequest, cfg configurator.Configurator, certManager certificate.Manager, _ *registry.ProxyRegistry) ([]types.Resource, error) {
 	//log.Info().Msgf("Composing SDS Discovery Response for Envoy with certificate SerialNumber=%s on Pod with UID=%s", proxy.GetCertificateSerialNumber(), proxy.GetPodUID())
+	key := proxy.GetPodUID()+ "sds"
+	r, found := meshCatalog.GetWitesandCache(key)
+	if found {
+		return r, nil
+	}
 
 	// OSM currently relies on kubernetes ServiceAccount for service identity
 	svcAccount, err := envoy.GetServiceAccountFromProxyCertificate(proxy.GetCertificateCommonName())
@@ -54,6 +59,7 @@ func NewResponse(meshCatalog catalog.MeshCataloger, proxy *envoy.Proxy, request 
 		sdsResources = append(sdsResources, envoyProto)
 	}
 
+	meshCatalog.SetWitesandCache(key, sdsResources)
 	return sdsResources, nil
 }
 

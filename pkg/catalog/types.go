@@ -19,6 +19,7 @@ import (
 	"github.com/openservicemesh/osm/pkg/service"
 	"github.com/openservicemesh/osm/pkg/smi"
 	"github.com/openservicemesh/osm/pkg/trafficpolicy"
+	"github.com/envoyproxy/go-control-plane/pkg/cache/types"
 )
 
 var (
@@ -111,6 +112,9 @@ type MeshCataloger interface {
 	// ListLocalClusterEndpoints returns the list of endpoints for this kubernetes cluster
 	ListLocalClusterEndpoints() (map[string][]endpoint.Endpoint, error)
 	GetWitesandCataloger() witesand.WitesandCataloger
+
+	GetWitesandCache(string) ([]types.Resource, bool)
+	SetWitesandCache(string, []types.Resource) bool
 	//witesand end
 }
 

@@ -6,6 +6,8 @@ import (
 	"github.com/openservicemesh/osm/pkg/endpoint"
 	"github.com/openservicemesh/osm/pkg/service"
 	"github.com/openservicemesh/osm/pkg/witesand"
+	"github.com/envoyproxy/go-control-plane/pkg/cache/types"
+	"time"
 )
 func (mc *MeshCatalog) GetProvider(ident string) endpoint.Provider {
 	for _, ep := range mc.endpointsProviders {
@@ -18,6 +20,20 @@ func (mc *MeshCatalog) GetProvider(ident string) endpoint.Provider {
 
 func (mc *MeshCatalog) GetWitesandCataloger() witesand.WitesandCataloger {
 	return mc.witesandCatalog
+}
+
+func (mc *MeshCatalog) GetWitesandCache(key string) ([]types.Resource, bool ) {
+	if r, found := mc.witesandCatalog.Cache.Get(key); found {
+		<-time.After(1*time.Second)
+		log.Error().Msgf( "cache len=%d", mc.witesandCatalog.Cache.Len())
+		log.Error().Msgf( "cache keys=%+v", mc.witesandCatalog.Cache.Keys())
+		return r.([]types.Resource), true
+	}
+	return nil, false
+}
+
+func (mc *MeshCatalog) SetWitesandCache(key string, result []types.Resource) bool {
+	return mc.witesandCatalog.Cache.Set(key, result)
 }
 
 // ListLocalEndpoints returns the list of endpoints for this kubernetes cluster

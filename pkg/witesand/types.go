@@ -1,9 +1,11 @@
 package witesand
 
 import (
+	"github.com/apibillme/cache"
 	"github.com/openservicemesh/osm/pkg/service"
 	"net/http"
 	"sync"
+	"time"
 
 	"k8s.io/client-go/kubernetes"
 
@@ -50,6 +52,8 @@ type WitesandCatalog struct {
 	sync.RWMutex
 	apigroupToPodMap   map[string]ApigroupToPodMap
 	apigroupToPodIPMap map[string]ApigroupToPodIPMap
+	Cache cache.Cache
+	CurrTime time.Time
 }
 
 type RemoteK8s struct {

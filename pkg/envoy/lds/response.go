@@ -34,6 +34,12 @@ func NewResponse(meshCatalog catalog.MeshCataloger, proxy *envoy.Proxy, _ *xds_d
 	// Github Issue #1575
 	proxyServiceName := svcList[0]
 
+	key := proxy.GetPodUID()+ "lds"
+	r, found := meshCatalog.GetWitesandCache(key)
+	if found {
+		return r, nil
+	}
+
 	svcAccount, err := envoy.GetServiceAccountFromProxyCertificate(proxy.GetCertificateCommonName())
 //	svcAccount, err := catalog.GetServiceAccountFromProxyCertificate(proxy.GetCommonName())
 	if err != nil {
@@ -130,6 +136,7 @@ func NewResponse(meshCatalog catalog.MeshCataloger, proxy *envoy.Proxy, _ *xds_d
 	//	}
 	//}
 
+	meshCatalog.SetWitesandCache(key, ldsResources)
 	return ldsResources, nil
 }
 

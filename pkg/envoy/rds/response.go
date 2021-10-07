@@ -27,6 +27,12 @@ func NewResponse(cataloger catalog.MeshCataloger, proxy *envoy.Proxy, discoveryR
 		return nil, err
 	}
 
+	key := proxy.GetPodUID()+ "rds"
+	r, found := cataloger.GetWitesandCache(key)
+	if found {
+		return r, nil
+	}
+
 	services, err := proxyRegistry.ListProxyServices(proxy)
 	if err != nil {
 		log.Error().Err(err).Msgf("Error looking up services for Envoy with serial number=%q", proxy.GetCertificateSerialNumber())
@@ -78,6 +84,7 @@ func NewResponse(cataloger catalog.MeshCataloger, proxy *envoy.Proxy, discoveryR
 		rdsResources = ensureRDSRequestCompletion(discoveryReq, rdsResources)
 	}
 
+	cataloger.SetWitesandCache(key, rdsResources)
 	return rdsResources, nil
 }
 

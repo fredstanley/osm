@@ -21,6 +21,12 @@ func NewResponse(meshCatalog catalog.MeshCataloger, proxy *envoy.Proxy, _ *xds_d
 		return nil, err
 	}
 
+	key := proxy.GetPodUID()+ "eds"
+	r, found := meshCatalog.GetWitesandCache(key)
+	if found {
+		return r, nil
+	}
+
 	allowedEndpoints, err := getEndpointsForProxy(meshCatalog, proxyIdentity.ToServiceIdentity())
 	if err != nil {
 		log.Error().Err(err).Msgf("Error looking up endpoints for proxy with SerialNumber=%s on Pod with UID=%s", proxy.GetCertificateSerialNumber(), proxy.GetPodUID())
@@ -51,6 +57,7 @@ func NewResponse(meshCatalog catalog.MeshCataloger, proxy *envoy.Proxy, _ *xds_d
 		rdsResources = append(rdsResources, loadAssignment)
 	}
 
+	meshCatalog.SetWitesandCache(key, rdsResources)
 	return rdsResources, nil
 }
 

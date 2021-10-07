@@ -29,6 +29,12 @@ func NewResponse(meshCatalog catalog.MeshCataloger, proxy *envoy.Proxy, _ *xds_d
 		return nil, err
 	}
 
+	key := proxy.GetPodUID()+ "cds"
+	r, found := meshCatalog.GetWitesandCache(key)
+	if found {
+		return r, nil
+	}
+
 	// Build remote clusters based on allowed outbound services
 	for _, dstService := range meshCatalog.ListAllowedOutboundServicesForIdentity(proxyIdentity.ToServiceIdentity()) {
 		cluster, err := getUpstreamServiceCluster(proxyIdentity.ToServiceIdentity(), dstService, cfg)
@@ -108,5 +114,8 @@ func NewResponse(meshCatalog catalog.MeshCataloger, proxy *envoy.Proxy, _ *xds_d
 		alreadyAdded.Add(cluster.Name)
 		cdsResources = append(cdsResources, cluster)
 	}
+
+	meshCatalog.SetWitesandCache(key, cdsResources)
+
 	return cdsResources, nil
 }
