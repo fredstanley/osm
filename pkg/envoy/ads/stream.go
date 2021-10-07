@@ -162,7 +162,7 @@ func respondToRequest(proxy *envoy.Proxy, discoveryRequest *xds_discovery.Discov
 	var requestNonce string
 	var lastNonce string
 
-	log.Debug().Msgf("Proxy SerialNumber=%s PodUID=%s: Request %s [nonce=%s; version=%s; resources=%v] last sent [nonce=%s; version=%d]",
+	log.Error().Msgf("fred Proxy SerialNumber=%s PodUID=%s: Request %s [nonce=%s; version=%s; resources=%v] last sent [nonce=%s; version=%d]",
 		proxy.GetCertificateSerialNumber(), proxy.GetPodUID(), discoveryRequest.TypeUrl,
 		discoveryRequest.ResponseNonce, discoveryRequest.VersionInfo, discoveryRequest.ResourceNames,
 		proxy.GetLastSentNonce(envoy.TypeURI(discoveryRequest.TypeUrl)), proxy.GetLastSentVersion(envoy.TypeURI(discoveryRequest.TypeUrl)))
@@ -177,7 +177,7 @@ func respondToRequest(proxy *envoy.Proxy, discoveryRequest *xds_discovery.Discov
 
 	if typeURL == envoy.TypeEmptyURI {
 		// Skip handling TypeEmptyURI for now, context #3258
-		log.Debug().Msgf("Proxy SerialNumber=%s PodUID=%s: Ignoring EmptyURI Type", proxy.GetCertificateSerialNumber(), proxy.GetPodUID())
+		log.Error().Msgf("Proxy SerialNumber=%s PodUID=%s: Ignoring EmptyURI Type", proxy.GetCertificateSerialNumber(), proxy.GetPodUID())
 		return false
 	}
 
@@ -202,7 +202,7 @@ func respondToRequest(proxy *envoy.Proxy, discoveryRequest *xds_discovery.Discov
 	// Handle first request on stream case, should always reply to empty nonce
 	requestNonce = discoveryRequest.ResponseNonce
 	if requestNonce == "" {
-		log.Debug().Msgf("Proxy SerialNumber=%s PodUID=%s: Empty nonce for %s, should be first message on stream (req resources: %v)",
+		log.Error().Msgf("Proxy SerialNumber=%s PodUID=%s: Empty nonce for %s, should be first message on stream (req resources: %v)",
 			proxy.GetCertificateSerialNumber(), proxy.GetPodUID(), typeURL.Short(), discoveryRequest.ResourceNames)
 		return true
 	}
@@ -215,7 +215,7 @@ func respondToRequest(proxy *envoy.Proxy, discoveryRequest *xds_discovery.Discov
 		// Version applied is going to be X, we will set our version to be also X, and trigger a response. This will make
 		// this control plane to generate version X+1 for this proxy, thus keeping linearity between versions even if the proxy
 		// moves around different control planes, and updating the resources to the SotW of this control plane.
-		log.Debug().Msgf("Proxy SerialNumber=%s PodUID=%s: Request type %s nonce %s for a proxy we didn't yet issue a nonce for. Updating version to %d.",
+		log.Error().Msgf("Proxy SerialNumber=%s PodUID=%s: Request type %s nonce %s for a proxy we didn't yet issue a nonce for. Updating version to %d.",
 			proxy.GetCertificateSerialNumber(), proxy.GetPodUID(), typeURL.Short(), requestNonce, requestVersion)
 		proxy.SetLastSentVersion(typeURL, requestVersion)
 		proxy.SetLastAppliedVersion(typeURL, requestVersion)
@@ -225,7 +225,7 @@ func respondToRequest(proxy *envoy.Proxy, discoveryRequest *xds_discovery.Discov
 	// Handle regular proto (nonce based) from now on
 	// As per protocol, we can ignore any request on the TypeURL stream that has not caught up with last sent nonce.
 	if requestNonce != lastNonce {
-		log.Debug().Msgf("Proxy SerialNumber=%s PodUID=%s: Ignoring request for %s non-latest nonce (request: %s, current: %s)",
+		log.Error().Msgf("Proxy SerialNumber=%s PodUID=%s: Ignoring request for %s non-latest nonce (request: %s, current: %s)",
 			proxy.GetCertificateSerialNumber(), proxy.GetPodUID(), typeURL.Short(), requestNonce, lastNonce)
 		return false
 	}
@@ -251,15 +251,25 @@ func respondToRequest(proxy *envoy.Proxy, discoveryRequest *xds_discovery.Discov
 	// requests resources subscribes to, it's ACK and nothing needs to be done.
 	// Otherwise, envoy might be asking us for additional resources that have to be sent along last time.
 	// Difference returns elemenets of <requested> that are not part of elements of <last sent>
-
 	requestedResourcesDifference := resourcesRequested.Difference(resourcesLastSent)
-	if requestedResourcesDifference.Cardinality() != 0 {
-		log.Debug().Msgf("Proxy SerialNumber=%s PodUID=%s: request difference in v:%d - requested: %v lastSent: %v (diff: %v), triggering update",
+	triggerup := false
+	for reqDif := range requestedResourcesDifference.Iterator().C {
+		unfulfilledRequestedResource := reqDif.(string)
+		log.Error().Msgf("unfullfiled = %s", unfulfilledRequestedResource)
+		if !strings.HasPrefix(unfulfilledRequestedResource, "default/edgepod-") {
+			log.Error().Msgf("unfullfiled = %s", unfulfilledRequestedResource)
+			triggerup = true
+		}
+	}
+
+	if triggerup {
+		//if requestedResourcesDifference.Cardinality() != 0 {
+		log.Error().Msgf("Proxy SerialNumber=%s PodUID=%s: request difference in v:%d - requested: %v lastSent: %v (diff: %v), triggering update",
 			proxy.GetCertificateSerialNumber(), proxy.GetPodUID(), requestVersion, resourcesRequested, resourcesLastSent, requestedResourcesDifference)
 		return true
 	}
 
-	log.Debug().Msgf("Proxy SerialNumber=%s PodUID=%s: ACK received for %s, version: %d nonce: %s resources ACKd: %v",
+	log.Error().Msgf("Proxy SerialNumber=%s PodUID=%s: ACK received for %s, version: %d nonce: %s resources ACKd: %v",
 		proxy.GetCertificateSerialNumber(), proxy.GetPodUID(), typeURL.Short(), requestVersion, requestNonce, resourcesRequested)
 	return false
 }

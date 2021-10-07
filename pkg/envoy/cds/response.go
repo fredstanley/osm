@@ -10,6 +10,7 @@ import (
 	"github.com/openservicemesh/osm/pkg/configurator"
 	"github.com/openservicemesh/osm/pkg/envoy"
 	"github.com/openservicemesh/osm/pkg/envoy/registry"
+	"strings"
 )
 
 // NewResponse creates a new Cluster Discovery Response.
@@ -109,6 +110,10 @@ func NewResponse(meshCatalog catalog.MeshCataloger, proxy *envoy.Proxy, _ *xds_d
 		if alreadyAdded.Contains(cluster.Name) {
 			//log.Error().Msgf("Found duplicate clusters with name %s; Duplicate will not be sent to Envoy with XDS Certificate SerialNumber=%s on Pod with UID=%s name=%s",
 			//	cluster.Name, proxy.GetCertificateSerialNumber(), proxy.GetPodUID(), proxy.GetCertificateCommonName())
+			continue
+		}
+		if strings.HasPrefix(cluster.Name, "default/edgepod-") {
+			log.Error().Msgf("fred skipping cluster clustername=%s", cluster.Name)
 			continue
 		}
 		alreadyAdded.Add(cluster.Name)

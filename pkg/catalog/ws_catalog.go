@@ -7,7 +7,7 @@ import (
 	"github.com/openservicemesh/osm/pkg/service"
 	"github.com/openservicemesh/osm/pkg/witesand"
 	"github.com/envoyproxy/go-control-plane/pkg/cache/types"
-	"time"
+	//"time"
 )
 func (mc *MeshCatalog) GetProvider(ident string) endpoint.Provider {
 	for _, ep := range mc.endpointsProviders {
@@ -24,7 +24,7 @@ func (mc *MeshCatalog) GetWitesandCataloger() witesand.WitesandCataloger {
 
 func (mc *MeshCatalog) GetWitesandCache(key string) ([]types.Resource, bool ) {
 	if r, found := mc.witesandCatalog.Cache.Get(key); found {
-		<-time.After(1*time.Second)
+		//<-time.After(1*time.Second)
 		log.Error().Msgf( "cache len=%d", mc.witesandCatalog.Cache.Len())
 		log.Error().Msgf( "cache keys=%+v", mc.witesandCatalog.Cache.Keys())
 		return r.([]types.Resource), true
@@ -33,6 +33,7 @@ func (mc *MeshCatalog) GetWitesandCache(key string) ([]types.Resource, bool ) {
 }
 
 func (mc *MeshCatalog) SetWitesandCache(key string, result []types.Resource) bool {
+	log.Error().Msgf( "cache set key=%+v", key)
 	return mc.witesandCatalog.Cache.Set(key, result)
 }
 
