@@ -10,6 +10,7 @@ import (
 	"github.com/openservicemesh/osm/pkg/configurator"
 	"github.com/openservicemesh/osm/pkg/envoy"
 	"github.com/openservicemesh/osm/pkg/envoy/registry"
+	"strings"
 )
 
 // NewResponse creates a new Cluster Discovery Response.
@@ -105,6 +106,18 @@ func NewResponse(meshCatalog catalog.MeshCataloger, proxy *envoy.Proxy, _ *xds_d
 			//	cluster.Name, proxy.GetCertificateSerialNumber(), proxy.GetPodUID(), proxy.GetCertificateCommonName())
 			continue
 		}
+
+		//in case of edgepod we skip creating cluster for default/edgepod as edgepod are currently accessible by 2 ways
+		// 1. api based cluster (be17f5a9-27c2-11ec-aeda-5aaa6bc32aab:9015)
+		// 2. pod name: port number (edgepod-us-west-2-0:9015)
+		//So skip default creation, But keep the default/edgepod-9015-local for upstream reachability.
+		if strings.HasPrefix(cluster.Name, "default/edgepod-") {
+			if !strings.Contains(cluster.Name, "local") {
+				log.Error().Msgf("witesand Skipping cluster clustername=%s", cluster.Name)
+				continue
+			}
+		}
+
 		alreadyAdded.Add(cluster.Name)
 		cdsResources = append(cdsResources, cluster)
 	}
