@@ -113,7 +113,7 @@ func NewResponse(meshCatalog catalog.MeshCataloger, proxy *envoy.Proxy, _ *xds_d
 		//So skip default creation, But keep the default/edgepod-9015-local for upstream reachability.
 		if strings.HasPrefix(cluster.Name, "default/edgepod-") {
 			if !strings.Contains(cluster.Name, "local") {
-				log.Error().Msgf("witesand Skipping cluster clustername=%s", cluster.Name)
+				//log.Error().Msgf("witesand Skipping cluster clustername=%s", cluster.Name)
 				continue
 			}
 		}

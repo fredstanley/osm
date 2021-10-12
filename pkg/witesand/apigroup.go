@@ -28,6 +28,12 @@ func (wc *WitesandCatalog) UpdateApigroupMap(w http.ResponseWriter, r *http.Requ
 			Apigroup: apigroupName,
 			Pods:     pods,
 		}
+
+		if apigroupName == "" {
+			log.Error().Msgf("Error [ApigroupMap] ApigroupName is empty. name=%s pods=%+v", apigroupName, pods)
+			continue
+		}
+
 		if len(atopMap.Pods) == 0 {
 			// DELETE pods
 			log.Info().Msgf("update [ApigroupMap] DELETE apigroup:%s", apigroupName)
@@ -49,6 +55,10 @@ func (wc *WitesandCatalog) UpdateAllApigroupMaps(apigroupToPodMap *map[string][]
 	wc.Lock()
 	log.Info().Msgf("UpdateAll [ApigroupMap] updating %d apiggroups", len(*apigroupToPodMap))
 	for apigroupName, pods := range *apigroupToPodMap {
+		if apigroupName == "" {
+			log.Error().Msgf("Error [ApigroupMap] ApigroupName is empty. name=%s pods=%+v", apigroupName, pods)
+			continue
+		}
 		apigroupMap := ApigroupToPodMap{
 			Apigroup: apigroupName,
 			Pods:     pods,
