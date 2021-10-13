@@ -83,11 +83,14 @@ func (wc *WitesandCatalog) UpdateRemoteK8s(remoteClusterId string, remoteIP stri
 		if exists {
 			remoteK8.failCount += 1
 			if remoteK8.failCount >= 3 {
-				log.Info().Msgf("[UpdateRemoteK8s] Delete clusterId:%s", remoteClusterId)
-				delete(wc.remoteK8s, remoteClusterId)
-				wc.UpdateClusterPods(remoteClusterId, nil)
-				wc.UpdateAllPods(remoteClusterId, nil)
-				return
+				//always have conection to the master
+				if remoteClusterId != "master" {
+					log.Info().Msgf("[UpdateRemoteK8s] Delete clusterId:%s", remoteClusterId)
+					delete(wc.remoteK8s, remoteClusterId)
+					wc.UpdateClusterPods(remoteClusterId, nil)
+					wc.UpdateAllPods(remoteClusterId, nil)
+					return
+				}
 			}
 			wc.remoteK8s[remoteClusterId] = remoteK8
 		}
