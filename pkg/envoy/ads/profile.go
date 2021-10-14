@@ -23,7 +23,7 @@ const (
 func xdsPathTimeTrack(startedAt time.Time, log *zerolog.Event, typeURI envoy.TypeURI, proxy *envoy.Proxy, success bool) {
 	elapsed := time.Since(startedAt)
 
-	log.Msgf("[%s] processing for Proxy with Certificate SerialNumber=%s took %s", typeURI, proxy.GetCertificateSerialNumber(), elapsed)
+	//log.Msgf("[%s] processing for Proxy with Certificate SerialNumber=%s took %s", typeURI, proxy.GetCertificateSerialNumber(), elapsed)
 
 	metricsstore.DefaultMetricsStore.ProxyConfigUpdateTime.
 		WithLabelValues(typeURI.String(), fmt.Sprintf("%t", success)).

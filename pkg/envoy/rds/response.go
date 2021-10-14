@@ -102,7 +102,7 @@ func ensureRDSRequestCompletion(discoveryReq *xds_discovery.DiscoveryRequest, rd
 		rdsResources = append(rdsResources, route.NewRouteConfigurationStub(unfulfilledRequestedResource))
 	}
 
-	log.Info().Msgf("RDS did not fulfill all requested resources (diff: %v). Fulfill with empty RouteConfigs.", requestDifference)
+	//log.Info().Msgf("RDS did not fulfill all requested resources (diff: %v). Fulfill with empty RouteConfigs.", requestDifference)
 
 	return rdsResources
 }

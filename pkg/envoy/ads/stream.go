@@ -102,7 +102,7 @@ func (s *Server) StreamAggregatedResources(server xds_discovery.AggregatedDiscov
 			<-s.workqueues.AddJob(newJob(typesRequest, &discoveryRequest))
 
 		case <-broadcastUpdate:
-			log.Info().Msgf("Proxy SerialNumber=%s PodUID=%s: Broadcast wake", proxy.GetCertificateSerialNumber(), proxy.GetPodUID())
+			//	log.Info().Msgf("Proxy SerialNumber=%s PodUID=%s: Broadcast wake", proxy.GetCertificateSerialNumber(), proxy.GetPodUID())
 
 			// Per protocol, we have to wait for the proxy to go through init phase (initial no-nonce request),
 			// otherwise we will be generating versions that will be ignored as empty nonce will generate a new version anyway.

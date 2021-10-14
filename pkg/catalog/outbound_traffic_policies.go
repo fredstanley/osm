@@ -165,7 +165,7 @@ func (mc *MeshCatalog) buildOutboundPolicies(sourceServiceIdentity identity.Serv
 	// fetch services running workloads with destination service account
 	destServices, err := mc.getDestinationServicesFromTrafficTarget(t)
 	if err != nil {
-		log.Error().Err(err).Msgf("Error resolving destination from traffic target %s (%s)", t.Name, t.Namespace)
+		//log.Error().Err(err).Msgf("Error resolving destination from traffic target %s (%s)", t.Name, t.Namespace)
 		return outboundPolicies
 	}
 
