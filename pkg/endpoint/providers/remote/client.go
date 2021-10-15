@@ -177,7 +177,7 @@ func (c *Client) run() error {
 		ticker := time.NewTicker(15 * time.Second)
 		for {
 			<-ticker.C
-			log.Info().Msgf("[poll] tick occurred")
+			//log.Info().Msgf("[poll] tick occurred")
 			for clusterId, remoteK8s := range c.wsCatalog.ListRemoteK8s() {
 				epMap, err := queryRemoteOsm(remoteK8s.OsmIP)
 				if err == nil {
