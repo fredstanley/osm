@@ -58,9 +58,11 @@ func (s *Server) StreamAggregatedResources(server xds_discovery.AggregatedDiscov
 
 	// Register to Envoy global broadcast updates
 	broadcastUpdate := events.GetPubSubInstance().Subscribe(announcements.ProxyBroadcast)
+	defer events.GetPubSubInstance().Unsub(broadcastUpdate)
 
 	// Register for certificate rotation updates
 	certAnnouncement := events.GetPubSubInstance().Subscribe(announcements.CertificateRotated)
+	defer events.GetPubSubInstance().Unsub(certAnnouncement)
 
 	newJob := func(typeURIs []envoy.TypeURI, discoveryRequest *xds_discovery.DiscoveryRequest) *proxyResponseJob {
 		return &proxyResponseJob{
