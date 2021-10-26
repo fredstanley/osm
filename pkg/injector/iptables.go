@@ -149,5 +149,8 @@ func generateIptablesCommands(outboundIPRangeExclusionList []string, outboundPor
 		cmd = append(cmd, rule)
 	}
 
+	cookieRule := fmt.Sprintf("iptables -t nat -N WSDONE")
+	cmd = append(cmd, cookieRule)
+
 	return cmd
 }
