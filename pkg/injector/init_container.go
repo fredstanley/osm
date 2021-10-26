@@ -12,7 +12,7 @@ func getInitContainerSpec(containerName string, cfg configurator.Configurator, o
 	inboundPortExclusionList []int, enablePrivilegedInitContainer bool) corev1.Container {
 	iptablesInitCommandsList := generateIptablesCommands(outboundIPRangeExclusionList, outboundPortExclusionList, inboundPortExclusionList)
 	iptablesInitCommand := strings.Join(iptablesInitCommandsList, " && ")
-	init := "if [ -z $(iptables -t nat -L | grep -c WSDONE) ]; then echo \"Iptables already inited. exiting\"; exit 0; fi" + " && " + iptablesInitCommand
+	init := "if [ -z $(iptables -t nat -L | grep -c WSDONE) ]; then echo \"Iptables already inited. exiting\"; else " + iptablesInitCommand + "; fi"
 
 	return corev1.Container{
 		Name:  containerName,
@@ -27,7 +27,7 @@ func getInitContainerSpec(containerName string, cfg configurator.Configurator, o
 		},
 		Command: []string{"/bin/sh"},
 		Args: []string{
-			"-c",
+			"-xc",
 			init,
 		},
 	}
